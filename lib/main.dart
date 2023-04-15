@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/dbhelper.dart';
-import 'package:question_answear_app/pages/category/presentation/views/category_view.dart';
+import 'package:question_answear_app/pages/admin/category/presentation/views/category_view.dart';
 import 'package:question_answear_app/routes/app_pages.dart';
 import 'package:question_answear_app/routes/app_routes.dart';
 

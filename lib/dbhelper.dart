@@ -1,24 +1,16 @@
 import 'package:path/path.dart';
-import 'package:question_answear_app/pages/section/domain/section.dart';
+import 'package:question_answear_app/pages/admin/question/domain/question.dart';
+import 'package:question_answear_app/pages/admin/section/domain/section.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'pages/category/domain/category.dart';
+import 'pages/admin/category/domain/category.dart';
 
 class DatabaseHelper {
   //////////////////////////////
-  static const _databaseName = "quiz.db";
-  static const _databaseVersion = 2;
-
-  static const services = 'services';
-
-  static const String columnIdS = "id";
-  static const String columnNameS = "name";
-  static const String columnPriceS = "price";
-  static const String columnTypeS = "type";
+  static const _databaseName = "quiz1.db";
+  static const _databaseVersion = 3;
 
   static const String id = "id";
-
-  static const clients = 'clients';
 
   DatabaseHelper._internal();
 
@@ -27,7 +19,10 @@ class DatabaseHelper {
   static Database? _database;
 
   Future<Database?> get database async {
+    await Sqflite.devSetDebugModeOn(true);
+
     if (_database != null) return _database;
+
     // lazily instantiate the db the first time it is accessed
     _database = await _initDatabase();
     return _database;
@@ -54,8 +49,7 @@ class DatabaseHelper {
           CREATE TABLE  $tableCategories(
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
             $nameCategory TEXT NOT NULL
-        
-          )
+                  )
      
     ''');
 
@@ -64,50 +58,30 @@ class DatabaseHelper {
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
             $nameSection TEXT NOT NULL,
             $categoryIdSection INTEGER NOT NULL,
-            $progressSection TEXT NOT NULL
+            $progressSection TEXT NOT NULL,
+            FOREIGN KEY ($categoryIdSection) REFERENCES categories(id) ON DELETE CASCADE
           )
               ''');
-    createTable(db);
-  }
 
-  createTable(Database db) async {
-    await db.execute("""
-            CREATE TABLE serviceproccess (
-              id INTEGER PRIMARY KEY, 
-              idEmplyee INTEGER,
-              idClient INTEGER,
-              idService INTEGER,
-              start TEXT NOT NULL,
-              end TEXT NOT NULL,
-              FOREIGN KEY (idClient) REFERENCES clients (id) 
-                ON DELETE NO ACTION ON UPDATE NO ACTION,
-              FOREIGN KEY (idService) REFERENCES services (id) 
-                ON DELETE NO ACTION ON UPDATE NO ACTION
-          )""");
-    // ,
-    //     FOREIGN KEY (idEmplyee) REFERENCES employees (id)
-    //       ON DELETE NO ACTION ON UPDATE NO ACTION
-    await db.execute("""
-            CREATE TABLE work (
-              idServiceProccess INTEGER NOT NULL,
-              idEmployee INTEGER NOT NULL,
-              workDuration TEXT,
-              workDate TEXT,
-              FOREIGN KEY (idServiceProccess) REFERENCES serviceproccess (id) 
-                ON DELETE NO ACTION ,
-              FOREIGN KEY (idEmployee) REFERENCES employees (id) 
-                ON DELETE NO ACTION 
-            )""");
+    await db.execute('''
+    CREATE TABLE  $tableQuestions(
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $nameQuestion TEXT NOT NULL,
+            $sectionIdQuestion INTEGER NOT NULL,
+            $answeredQuestion INTEGER NOT NULL,
+           FOREIGN KEY ($sectionIdQuestion) REFERENCES sections(id) ON DELETE CASCADE
+          )
+              ''');
 
-    await db.execute("""
-            CREATE TABLE absence (
-              id INTEGER PRIMARY KEY, 
-              idEmployee INTEGER NOT NULL,
-              dateAbsence TEXT,
-              absenceDuration TEXT,
-              FOREIGN KEY (idEmployee) REFERENCES employees (id) 
-                ON DELETE NO ACTION 
-            )""");
+    await db.execute('''
+    CREATE TABLE  $tableAnswers(
+            $id INTEGER PRIMARY KEY AUTOINCREMENT,
+            $nameAnswer TEXT NOT NULL,
+            $questionIdAnswer INTEGER NOT NULL,
+            $isValidAnswer INTEGER NOT NULL,
+            FOREIGN KEY ($questionIdAnswer) REFERENCES questions(id) ON DELETE CASCADE
+          )
+              ''');
   }
 
   Future<int> insert(String table, Map<String, dynamic> row) async {
@@ -115,17 +89,6 @@ class DatabaseHelper {
 
     return await db!.insert(table, row);
   }
-
-  // Future<int> insertClients(String table, Map<String, dynamic> row) async {
-  //   Database db = await instance.database;
-  //   return await db.insert(table, row);
-  // }
-
-  // Future<void> insertServices(Services service) async {
-  //   Database db = await instance.database;
-  //   return await db
-  //       .insert(services, {'name': service.name, 'price': service.price});
-  // }
 
   // All of the rows are returned as a list of maps, where each map is
   // a key-value list of columns.
@@ -145,11 +108,10 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> queryAllServEmp(
-      String table, int idServPro) async {
+  Future<List<Map<String, dynamic>>> queryAllWithRelation(int sectionId) async {
     Database db = await getDb();
     return await db.rawQuery(
-        'SELECT employees.* FROM work INNER JOIN employees ON employees.id = work.idEmployee where idServiceProccess=$idServPro');
+        'SELECT questions.*,answers.* FROM work INNER JOIN questions ON questions.id = answers.questions_id where sections_id=$sectionId');
   }
 
   Future<List<Map<String, dynamic>>> joinss(String table) async {
@@ -189,12 +151,6 @@ class DatabaseHelper {
     return await db.rawQuery('SELECT *  FROM services where id=$idService');
   }
 
-// ,employees.firstName as firstNameEmp,employees.lastName as lastNameEmp,
-  Future<List<Map<String, dynamic>>> queryAllRowsService() async {
-    Database db = await getDb();
-    return await db.query(services);
-  }
-
   // Future<int> updateClient(Clients client) async {
   //   Database db = await instance.database;
   //   int id = client.id;
@@ -211,23 +167,10 @@ class DatabaseHelper {
   //       .update("employees", emp.toMap(), where: 'id = ?', whereArgs: [id]);
   // }
 
-  // Future<int> updateService(Section category) async {
-  //   Database db = await getDb();
-  //   int id = category.id!;
-
-  //   return await db
-  //       .update("services", category.toMap(), where: 'id = ?', whereArgs: [id]);
-  // }
-
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.
   Future<int> delete(String table, int id) async {
     Database db = (await instance.database)!;
     return await db.delete(table, where: 'id = ?', whereArgs: [id]);
-  }
-
-  Future<void> deleteServices(int id) async {
-    Database db = await getDb();
-    await db.delete(services, where: 'id = ?', whereArgs: [id]);
   }
 }
