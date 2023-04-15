@@ -26,8 +26,9 @@ dependencies:
   get: ^4.6.5
   rflutter_alert: ^2.0.4
   salomon_bottom_bar: ^3.3.2
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # flutter_excel: ^1.0.1
+  excel: ^2.0.4
+  spreadsheet_decoder: ^2.1.1
   cupertino_icons: ^1.0.2
 
 dev_dependencies:

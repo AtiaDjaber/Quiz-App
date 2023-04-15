@@ -1,12 +1,13 @@
 import 'package:path/path.dart';
+import 'package:question_answear_app/pages/section/domain/section.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'pages/category/domain/category.dart';
 
 class DatabaseHelper {
   //////////////////////////////
-  static const _databaseName = "manages.db";
-  static const _databaseVersion = 1;
+  static const _databaseName = "quiz.db";
+  static const _databaseVersion = 2;
 
   static const services = 'services';
 
@@ -59,27 +60,14 @@ class DatabaseHelper {
     ''');
 
     await db.execute('''
-    CREATE TABLE  $services(
+    CREATE TABLE  $tableSections(
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
-            $columnNameS TEXT NOT NULL,
-            $columnPriceS TEXT NOT NULL,
-            $columnTypeS TEXT NOT NULL
+            $nameSection TEXT NOT NULL,
+            $categoryIdSection INTEGER NOT NULL,
+            $progressSection TEXT NOT NULL
           )
               ''');
     createTable(db);
-    // await db.execute('''
-    // CREATE TABLE  $servicesProccess(
-    //         $id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //         $startDateSI TEXT NOT NULL,
-    //         $endDateSI TEXT NOT NULL,
-    //         $columnClientId integer,
-    //         $columnEmplId integer,
-    //        "$columnServiceId integer,
-    //        "FOREIGN KEY (idService) REFERENCES services (id) ON DELETE NO ACTION,"
-    //        "FOREIGN KEY (idClient) REFERENCES clients (id) ON DELETE NO ACTION,"
-    //        "FOREIGN KEY (idEmplyee) REFERENCES employees (id) ON DELETE NO ACTION"
-    //       )
-    //           ''');
   }
 
   createTable(Database db) async {
@@ -146,10 +134,13 @@ class DatabaseHelper {
     return (await instance.database)!;
   }
 
-  Future<List<Map<String, dynamic>>> queryData(String table) async {
+  Future<List<Map<String, dynamic>>> queryData(String table,
+      {String? where, List? argsWhere}) async {
     Database db = await getDb();
     return await db.query(
       table,
+      where: where,
+      whereArgs: argsWhere,
       orderBy: "id Desc",
     );
   }
@@ -220,13 +211,13 @@ class DatabaseHelper {
   //       .update("employees", emp.toMap(), where: 'id = ?', whereArgs: [id]);
   // }
 
-  Future<int> updateService(Category category) async {
-    Database db = await getDb();
-    int id = category.id!;
+  // Future<int> updateService(Section category) async {
+  //   Database db = await getDb();
+  //   int id = category.id!;
 
-    return await db
-        .update("services", category.toMap(), where: 'id = ?', whereArgs: [id]);
-  }
+  //   return await db
+  //       .update("services", category.toMap(), where: 'id = ?', whereArgs: [id]);
+  // }
 
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.

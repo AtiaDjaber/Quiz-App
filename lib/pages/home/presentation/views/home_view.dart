@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/pages/category/domain/category.dart';
 import 'package:question_answear_app/pages/category/presentation/views/category_view.dart';
+import 'package:question_answear_app/routes/app_routes.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
@@ -17,7 +18,23 @@ class HomeView extends GetView<HomeController> {
       child: Scaffold(
         body: GetBuilder<HomeController>(builder: (_) {
           return controller.currentIndex == 0
-              ? Container()
+              ? ListView.builder(
+                  itemCount: controller.items.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => Get.toNamed(AppRoutes.section,
+                          arguments: controller.items[index]),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                            child: Text(
+                          controller.items[index].name ?? "",
+                          style: TextStyle(fontSize: 18),
+                        )),
+                      ),
+                    );
+                  },
+                )
               : const CategoryView();
         }),
         bottomNavigationBar: GetBuilder<HomeController>(builder: (_) {

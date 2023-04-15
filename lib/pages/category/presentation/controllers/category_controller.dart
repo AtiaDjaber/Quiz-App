@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/dbhelper.dart';
+import 'package:question_answear_app/pages/category/data/category_respository.dart';
 import '../../domain/category.dart';
 
 class CategoryController extends GetxController
@@ -12,7 +13,8 @@ class CategoryController extends GetxController
   TextEditingController nameContr = TextEditingController();
   TextEditingController priceContr = TextEditingController();
   TextEditingController typeCont = TextEditingController();
-  final dbHelper = DatabaseHelper.instance;
+  final categoryRepository =
+      Get.put<CategoryRepository>(CategoryRepositoryImp(), permanent: true);
 
   var index = 0;
   @override
@@ -23,22 +25,15 @@ class CategoryController extends GetxController
     super.onInit();
   }
 
-  getData() {
-    dbHelper.queryData(tableCategories).then((res) {
-      items = [];
-      for (var row in res) {
-        Category cli = Category.fromMap(row);
-        items.add(cli);
-      }
-      update();
-    });
+  getData() async {
+    items = await categoryRepository.getData(tableCategories);
+    update();
   }
 
   void insertData() async {
     Map<String, dynamic> row = {nameCategory: nameContr.text};
     try {
-      final id = await dbHelper.insert(tableCategories, row);
-      print(id);
+      final id = await categoryRepository.insert(tableCategories, row);
       getData();
     } catch (e) {
       print(e);
