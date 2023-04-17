@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:question_answear_app/constansts.dart';
+import 'package:question_answear_app/core/presentation/font_manager.dart';
+import 'package:question_answear_app/core/widget/app_bar.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/admin/category/presentation/views/category_view.dart';
 import 'package:question_answear_app/routes/app_routes.dart';
@@ -16,9 +19,8 @@ class HomeView extends GetView<HomeController> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("الدورات", style: TextStyle(fontSize: 22)),
-        ),
+        backgroundColor: backgroundColor,
+        appBar: const CustomAppBar(title: "الدورات"),
         body: GetBuilder<HomeController>(builder: (_) {
           return controller.currentIndex == 0
               ? ListView.builder(
@@ -30,10 +32,14 @@ class HomeView extends GetView<HomeController> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                            child: Text(
-                          controller.items[index].name ?? "",
-                          style: TextStyle(fontSize: 18),
-                        )),
+                          elevation: 0,
+                          child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                controller.items[index].name ?? "",
+                                style: FontManager.primaryStyle,
+                              )),
+                        ),
                       ),
                     );
                   },

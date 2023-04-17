@@ -4,4 +4,5 @@ import 'package:flutter/material.dart';
 
 const String nameApp = "Quiz";
 const String font = "cairo";
-const Color primaryColor = Color.fromRGBO(4, 115, 192, 1);
+const Color primaryColor = Color.fromRGBO(161, 90, 217, 1);
+const Color backgroundColor = Color.fromARGB(248, 248, 248, 249);

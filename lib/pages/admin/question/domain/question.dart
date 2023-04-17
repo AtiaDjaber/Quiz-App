@@ -4,20 +4,29 @@ const String idQuestion = "id";
 const String nameQuestion = "name";
 const String answeredQuestion = "answered";
 const String sectionIdQuestion = "sections_id";
+const String photoQuestion = "photo";
 const String tableQuestions = 'questions';
 
 class Question {
   int? id;
   String? name;
+  String? photo;
   int? sectionId;
   int? answered;
   List<Answer>? answers = [];
-  Question({this.id, this.name, this.answered, this.sectionId, this.answers});
+  Question(
+      {this.id,
+      this.name,
+      this.photo,
+      this.answered,
+      this.sectionId,
+      this.answers});
 
   Question.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     name = map['name'];
     answered = map['answered'];
+    photo = map['photo'];
     sectionId = map['sections_id'];
   }
 
@@ -26,6 +35,7 @@ class Question {
       idQuestion: id,
       nameQuestion: name,
       answeredQuestion: answered,
+      photoQuestion: photo,
       sectionIdQuestion: sectionId,
     };
   }

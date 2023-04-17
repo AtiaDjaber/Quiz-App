@@ -4,6 +4,7 @@ import 'package:question_answear_app/pages/client/question_client/presentation/c
 class QuestionClientBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => QuestionClientController());
+    Get.put<QuestionClientController>(QuestionClientController(),
+        permanent: false);
   }
 }
