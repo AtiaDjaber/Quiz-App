@@ -9,13 +9,15 @@ class Section {
   String? name;
   int? categoryId;
   double? progress;
-  Section({this.id, this.name, this.categoryId});
+  int? questionCount;
+  Section({this.id, this.name, this.questionCount, this.categoryId});
 
   Section.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     name = map['name'];
     progress = double.tryParse(map['progress']);
     categoryId = map['categories_id'];
+    questionCount = map['question_count'];
   }
 
   Map<String, dynamic> toMap() {

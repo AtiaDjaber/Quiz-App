@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/constansts.dart';
 import 'package:question_answear_app/core/presentation/font_manager.dart';
 import 'package:question_answear_app/core/widget/app_bar.dart';
 import 'package:question_answear_app/core/widget/bubble_widget.dart';
+import 'package:question_answear_app/core/widget/custom_elevated_button.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/admin/question/domain/question.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
@@ -114,8 +117,9 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                           ),
                                           SizedBox(height: 10),
                                           InkWell(
-                                            onTap: () =>
-                                                controller.updateImage(),
+                                            onTap: () => controller.updateImage(
+                                                controller.items[
+                                                    controller.indexQuestion]),
                                             child: Container(
                                               height: 110,
                                               width: 200,
@@ -123,11 +127,18 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                                 color: Colors.grey.shade100,
                                                 borderRadius:
                                                     BorderRadius.circular(8),
-                                                image: controller.photo == null
+                                                image: controller
+                                                            .items[controller
+                                                                .indexQuestion]
+                                                            .photo ==
+                                                        null
                                                     ? null
                                                     : DecorationImage(
-                                                        image: FileImage(
-                                                            controller.photo!),
+                                                        image: FileImage(File(
+                                                            controller
+                                                                .items[controller
+                                                                    .indexQuestion]
+                                                                .photo!)),
                                                         fit: BoxFit.fill),
                                               ),
                                             ),
@@ -195,8 +206,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                             const SizedBox(height: 30),
                             ...controller.answers.map((e) => InkWell(
                                   onTap: () {
-                                    controller.selectedAnswer = e;
-                                    controller.update();
+                                    controller.setAnswer(e);
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -235,78 +245,55 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                     ),
                                   ),
                                 )),
-                            Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (controller.position > 0) {
-                                        controller.indexQuestion =
-                                            controller.indexQuestion - 1;
-
-                                        controller.position =
-                                            controller.position - 1;
-                                        controller.getAnswer(controller
-                                            .items[controller.indexQuestion]
-                                            .id!);
-                                      }
-                                    },
-                                    style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.grey.shade300)),
+                            controller.selectedAnswer != null
+                                ? Padding(
+                                    padding: const EdgeInsets.all(2),
                                     child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "السابق",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
-                                                color: Colors.grey.shade700),
-                                          ),
-                                          SizedBox.square(dimension: 4),
-                                          Icon(
-                                            Icons.arrow_back_ios,
-                                            color: Colors.grey.shade700,
-                                            size: 20,
-                                          ),
-                                        ]),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      if (count - 1 > controller.position) {
-                                        controller.indexQuestion =
-                                            controller.indexQuestion + 1;
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        CustomElevatedButton(
+                                          title: "السابق",
+                                          backgroundColor: Colors.grey.shade300,
+                                          foregroundColor: Colors.grey.shade700,
+                                          iconData: Icons.arrow_back_ios,
+                                          onPressed: () {
+                                            if (controller.position > 0) {
+                                              controller.indexQuestion =
+                                                  controller.indexQuestion - 1;
 
-                                        controller.position =
-                                            controller.position + 1;
-                                        controller.getAnswer(controller
-                                            .items[controller.indexQuestion]
-                                            .id!);
-                                      }
-                                    },
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            "التالي",
-                                            style: TextStyle(
-                                                fontSize: 16,
+                                              controller.position =
+                                                  controller.position - 1;
+                                              controller.getAnswer(controller
+                                                  .items[
+                                                      controller.indexQuestion]
+                                                  .id!);
+                                            }
+                                          },
+                                        ),
+                                        CustomElevatedButton(
+                                          title: "التالي",
+                                          iconData: Icons.arrow_forward_ios,
+                                          foregroundColor: Colors.white,
+                                          onPressed: () {
+                                            if (count - 1 >
+                                                controller.position) {
+                                              controller.indexQuestion =
+                                                  controller.indexQuestion + 1;
 
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          SizedBox.square(dimension: 4),
-                                          Icon(Icons.arrow_forward_ios,
-                                              color: Colors.white, size: 20),
-                                        ]),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                              controller.position =
+                                                  controller.position + 1;
+                                              controller.getAnswer(controller
+                                                  .items[
+                                                      controller.indexQuestion]
+                                                  .id!);
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox(),
                           ],
                         ),
                       ],

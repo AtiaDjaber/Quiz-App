@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:question_answear_app/constansts.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/routes/app_routes.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -21,11 +22,11 @@ class CategoryView extends GetView<CategoryController> {
             bottom: TabBar(
               controller: controller.tabController,
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.black,
-              indicatorColor: Colors.blueAccent,
+              unselectedLabelColor: Colors.grey.shade400,
+              indicatorColor: Colors.yellow,
               labelStyle: TextStyle(fontSize: 22),
-              unselectedLabelStyle: TextStyle(fontSize: 20),
-              // indicator: BoxDecoration(
+              unselectedLabelStyle:
+                  TextStyle(fontSize: 20), // indicator: BoxDecoration(
               //     borderRadius: BorderRadius.circular(50),
               //     color: Colors.amber[200]),
               tabs: [
@@ -107,7 +108,7 @@ class CategoryView extends GetView<CategoryController> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    color: Colors.blue,
+                                    color: primaryColor,
                                     elevation: 4,
                                     minWidth: 200,
                                     height: 50,
@@ -194,6 +195,19 @@ class CategoryView extends GetView<CategoryController> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                controller.delete(category.id);
+              },
+              child: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                      color: Colors.red[50], shape: BoxShape.circle),
+                  child: const Icon(Icons.cancel_outlined, color: Colors.red)),
             ),
           ),
           Padding(

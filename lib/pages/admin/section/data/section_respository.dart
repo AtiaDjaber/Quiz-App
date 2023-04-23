@@ -3,6 +3,7 @@ import 'package:question_answear_app/pages/admin/section/domain/section.dart';
 
 abstract class SectionRepository {
   Future<List<Section>> getData(int categoryId);
+  Future<List<Section>> getDataWithCount(int categoryId);
   Future<int> insert(Map<String, dynamic> row);
 }
 
@@ -24,5 +25,16 @@ class SectionRepositoryImp extends SectionRepository {
   @override
   Future<int> insert(Map<String, dynamic> row) async {
     return await dbHelper.insert(tableSections, row);
+  }
+
+  @override
+  Future<List<Section>> getDataWithCount(int categoryId) async {
+    List<Section> items = [];
+    var data = await dbHelper.querySectionsWithCountQuestion(categoryId);
+    for (var row in data) {
+      Section cli = Section.fromMap(row);
+      items.add(cli);
+    }
+    return items;
   }
 }

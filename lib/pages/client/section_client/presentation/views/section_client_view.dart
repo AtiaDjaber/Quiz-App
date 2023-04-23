@@ -5,6 +5,7 @@ import 'package:question_answear_app/constansts.dart';
 import 'package:question_answear_app/core/presentation/font_manager.dart';
 import 'package:question_answear_app/core/widget/app_bar.dart';
 import 'package:question_answear_app/core/widget/bubble_widget.dart';
+import 'package:question_answear_app/core/widget/custom_elevated_button.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
 import 'package:question_answear_app/pages/admin/section/domain/section.dart';
@@ -112,23 +113,91 @@ class SectionClientView extends GetView<SectionClientController> {
     );
   }
 
-  InkWell buildCard(int index) {
-    return InkWell(
-      onTap: () => Get.toNamed(AppRoutes.questionClient,
-          arguments: controller.items[index]),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Container(
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(8)),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                controller.items[index].name ?? "",
-                style: FontManager.primaryStyle,
-              ),
-            )),
-      ),
+  Widget buildCard(int index) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text(
+                    controller.items[index].name ?? "",
+                    style: FontManager.primaryStyle,
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text.rich(
+                        TextSpan(children: [
+                          TextSpan(
+                              text: "عدد الأسئلة",
+                              style: FontManager.spanStyle),
+                          TextSpan(
+                              text: " ${controller.items[index].questionCount}",
+                              style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold)),
+                        ]),
+                      ),
+                    ],
+                  ),
+                  trailing: Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                        color: Colors.white, shape: BoxShape.circle),
+                    child: Center(
+                      child: SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: CircularProgressIndicator(
+                          value: 0.5,
+                          color: primaryColor,
+                          backgroundColor: Colors.grey.shade200,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CustomElevatedButton(
+                      title: "استكمال",
+                      onPressed: () => Get.toNamed(AppRoutes.questionClient,
+                          arguments: {
+                            "section": controller.items[index],
+                            "status": 2
+                          }),
+                    ),
+                    CustomElevatedButton(
+                      title: "إعادة",
+                      backgroundColor: Colors.green,
+                      onPressed: () => Get.toNamed(AppRoutes.questionClient,
+                          arguments: {
+                            "section": controller.items[index],
+                            "status": 1
+                          }),
+                    ),
+                    CustomElevatedButton(
+                      title: "إعادة الأسئلة الخطأ",
+                      backgroundColor: Colors.red,
+                      onPressed: () => Get.toNamed(AppRoutes.questionClient,
+                          arguments: {
+                            "section": controller.items[index],
+                            "status": 0
+                          }),
+                    )
+                  ],
+                )
+              ],
+            ),
+          )),
     );
   }
 }

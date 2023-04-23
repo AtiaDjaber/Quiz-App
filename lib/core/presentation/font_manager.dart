@@ -5,7 +5,9 @@ import 'package:question_answear_app/constansts.dart';
 class FontManager {
   static double primarySize = 24;
   static TextStyle primaryStyle = TextStyle(
-      color: Color.fromARGB(255, 61, 38, 63),
-      fontSize: 20,
+      color: Color.fromARGB(255, 69, 46, 71),
+      fontSize: 18,
       fontWeight: FontWeight.w600);
+  static TextStyle spanStyle = TextStyle(
+      color: Colors.grey.shade500, fontSize: 16, fontWeight: FontWeight.w600);
 }

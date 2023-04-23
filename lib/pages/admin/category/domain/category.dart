@@ -7,7 +7,7 @@ const String tableCategories = 'categories';
 class Category {
   int? id;
   String? name;
-
+  int? sectionCount;
   Category({
     this.id,
     this.name,
@@ -16,6 +16,7 @@ class Category {
   Category.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     name = map['name'];
+    sectionCount = map['section_count'];
   }
 
   Map<String, dynamic> toMap() {

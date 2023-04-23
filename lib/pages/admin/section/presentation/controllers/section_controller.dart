@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:question_answear_app/core/widget/delete_dialog.dart';
+import 'package:question_answear_app/dbhelper.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
+import 'package:question_answear_app/pages/admin/category/presentation/controllers/category_controller.dart';
 import 'package:question_answear_app/pages/admin/section/data/section_respository.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
 import 'package:question_answear_app/pages/admin/question/data/question_respository.dart';
@@ -49,9 +52,9 @@ class SectionController extends GetxController
     Map<String, dynamic> row = {nameSection: nameContr.text};
     selectedSection.name = nameContr.text;
     selectedSection.progress = 0;
+    selectedSection.categoryId = category?.id;
     try {
       final id = await sectionRepository.insert(selectedSection.toMap());
-      print(id);
       getData();
     } catch (e) {
       print(e);
@@ -105,6 +108,20 @@ class SectionController extends GetxController
       }
     } else {
       // User canceled the picker
+    }
+  }
+
+  var categController = Get.find<CategoryController>();
+  final dbHelper = DatabaseHelper.instance;
+
+  Future<void> delete(int? id) async {
+    if (await showDeleteDialog()) {
+      dbHelper.delete(tableSections, id!);
+
+      getData();
+      if (categController != null) {
+        categController.getData();
+      }
     }
   }
 }

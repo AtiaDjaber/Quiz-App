@@ -6,6 +6,8 @@ abstract class QuestionRepository {
       String tableName, String where, List<dynamic> args);
   Future<List<Answer>> getAnswer(
       String tableName, String where, List<dynamic> args);
+  Future<int> updateData(
+      String tableName, Map<String, dynamic> map, List<dynamic> args);
   Future<int> insert(String tableName, Map<String, dynamic> row);
 }
 
@@ -41,5 +43,11 @@ class QuestionRepositoryImp extends QuestionRepository {
       items.add(cli);
     }
     return items;
+  }
+
+  @override
+  Future<int> updateData(
+      String tableName, Map<String, dynamic> map, List args) async {
+    return await dbHelper.update(tableName, map, args);
   }
 }

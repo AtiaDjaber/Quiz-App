@@ -15,11 +15,11 @@ class QuestionClientController extends GetxController {
 
   final repository = Get.put<QuestionRepository>(QuestionRepositoryImp());
 
-  File? photo;
+  // File? photo;
   var index = 0;
   Section? section;
   int? indexSection;
-  int indexQuestion = 1;
+  int indexQuestion = 0;
   int position = 1;
 
   int counter = 60;
@@ -31,9 +31,10 @@ class QuestionClientController extends GetxController {
 
   @override
   void onInit() {
-    section = Get.arguments;
+    section = (Get.arguments as Map)["section"];
+
     position = indexQuestion + 1;
-    getData().then((value) {
+    getData(Get.arguments["status"] as int).then((value) {
       if (items.isNotEmpty) {
         getAnswer(items[0].id!);
         startTimer();
@@ -69,15 +70,20 @@ class QuestionClientController extends GetxController {
   void setCountDown() {
     if (counter <= 0) {
       countdownTimer!.cancel();
+      selectedAnswer = answers.firstWhere((element) => element.isValid == 1);
+      var item = items[indexQuestion];
+      item.answered = 0;
+      repository.updateData(tableQuestions, item.toMap(), [item.id]);
+      update();
     } else {
       counter = counter - 1;
     }
     update();
   }
 
-  Future getData() async {
-    items = await repository
-        .getData(tableQuestions, "sections_id = ?", [section!.id!]);
+  Future getData(int argument) async {
+    items = await repository.getData(tableQuestions,
+        "sections_id = ? AND answered = ?", [section!.id!, argument]);
     update();
   }
 
@@ -89,12 +95,15 @@ class QuestionClientController extends GetxController {
     restartTimer();
   }
 
-  updateImage() async {
+  updateImage(Question item) async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(type: FileType.image, allowMultiple: false);
 
     if (result != null) {
-      photo = File(result.files.first.path!);
+      item.photo = result.files.first.path;
+      repository.updateData(tableQuestions, item.toMap(), [item.id]);
+      // photo = File(result.files.first.path!);
+
       update();
     }
   }
@@ -117,5 +126,15 @@ class QuestionClientController extends GetxController {
                 ? const Icon(Icons.cancel, color: Colors.red)
                 : Icon(Icons.circle_outlined, color: Colors.grey.shade300))
         : Icon(Icons.circle_outlined, color: Colors.grey.shade300);
+  }
+
+  void setAnswer(Answer e) {
+    if (selectedAnswer == null) {
+      selectedAnswer = e;
+      var item = items[indexQuestion];
+      item.answered = e.isValid == 1 ? 1 : 0;
+      repository.updateData(tableQuestions, item.toMap(), [item.id]);
+      update();
+    }
   }
 }

@@ -9,8 +9,6 @@ import 'package:question_answear_app/pages/client/home/presentation/controllers/
 import 'package:question_answear_app/pages/admin/question/data/question_respository.dart';
 import 'package:question_answear_app/pages/admin/question/domain/question.dart';
 import 'package:question_answear_app/pages/admin/section/domain/section.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:spreadsheet_decoder/spreadsheet_decoder.dart';
 
 class SectionClientController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -33,7 +31,7 @@ class SectionClientController extends GetxController
   }
 
   getData() async {
-    items = await sectionRepository.getData(category!.id!);
+    items = await sectionRepository.getDataWithCount(category!.id!);
     update();
   }
 }

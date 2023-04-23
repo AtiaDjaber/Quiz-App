@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:question_answear_app/core/widget/delete_dialog.dart';
 import 'package:question_answear_app/dbhelper.dart';
 import 'package:question_answear_app/pages/admin/category/data/category_respository.dart';
+import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
 import '../../domain/category.dart';
 
 class CategoryController extends GetxController
@@ -15,6 +17,9 @@ class CategoryController extends GetxController
   TextEditingController typeCont = TextEditingController();
   final categoryRepository =
       Get.put<CategoryRepository>(CategoryRepositoryImp(), permanent: true);
+  final dbHelper = DatabaseHelper.instance;
+
+  HomeController homeController = Get.find<HomeController>();
 
   var index = 0;
   @override
@@ -35,6 +40,9 @@ class CategoryController extends GetxController
     try {
       final id = await categoryRepository.insert(tableCategories, row);
       getData();
+      if (homeController != null) {
+        homeController.getData();
+      }
     } catch (e) {
       print(e);
     }
@@ -48,5 +56,16 @@ class CategoryController extends GetxController
 
     // await dbHelper.updateService(Category.fromMap(row));
     getData();
+  }
+
+  Future<void> delete(int? id) async {
+    if (await showDeleteDialog()) {
+      dbHelper.delete(tableCategories, id!);
+
+      getData();
+      if (homeController != null) {
+        homeController.update();
+      }
+    }
   }
 }

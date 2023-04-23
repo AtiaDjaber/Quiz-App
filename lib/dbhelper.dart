@@ -7,8 +7,8 @@ import 'pages/admin/category/domain/category.dart';
 
 class DatabaseHelper {
   //////////////////////////////
-  static const _databaseName = "quiz1.db";
-  static const _databaseVersion = 3;
+  static const _databaseName = "quiz2.db";
+  static const _databaseVersion = 1;
 
   static const String id = "id";
 
@@ -67,6 +67,7 @@ class DatabaseHelper {
     CREATE TABLE  $tableQuestions(
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
             $nameQuestion TEXT NOT NULL,
+            $photoQuestion TEXT NULL,
             $sectionIdQuestion INTEGER NOT NULL,
             $answeredQuestion INTEGER NOT NULL,
            FOREIGN KEY ($sectionIdQuestion) REFERENCES sections(id) ON DELETE CASCADE
@@ -78,6 +79,7 @@ class DatabaseHelper {
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
             $nameAnswer TEXT NOT NULL,
             $questionIdAnswer INTEGER NOT NULL,
+            $photoQuestion TEXT NULL,
             $isValidAnswer INTEGER NOT NULL,
             FOREIGN KEY ($questionIdAnswer) REFERENCES questions(id) ON DELETE CASCADE
           )
@@ -89,9 +91,6 @@ class DatabaseHelper {
 
     return await db!.insert(table, row);
   }
-
-  // All of the rows are returned as a list of maps, where each map is
-  // a key-value list of columns.
 
   Future<Database> getDb() async {
     return (await instance.database)!;
@@ -108,64 +107,25 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> queryAllWithRelation(int sectionId) async {
+  Future<List<Map<String, dynamic>>> queryCategoriesWithCountSection() async {
     Database db = await getDb();
     return await db.rawQuery(
-        'SELECT questions.*,answers.* FROM work INNER JOIN questions ON questions.id = answers.questions_id where sections_id=$sectionId');
+        'SELECT T1.*,count(T2.categories_id) as section_count FROM categories as T1 LEFT OUTER JOIN sections as T2 ON T1.id = T2.categories_id GROUP BY T2.categories_id');
   }
 
-  Future<List<Map<String, dynamic>>> joinss(String table) async {
+  Future<List<Map<String, dynamic>>> querySectionsWithCountQuestion(
+      int categoryId) async {
     Database db = await getDb();
     return await db.rawQuery(
-        'SELECT serviceproccess.id, serviceproccess.start, serviceproccess.end,clients.firstName as firstNameClient,clients.lastName as lastNameClient,services.name FROM serviceproccess INNER JOIN clients ON serviceproccess.idClient = clients.id INNER JOIN services ON serviceproccess.idService = services.id');
+        'SELECT S.*,count(Q.sections_id) as question_count FROM sections as S LEFT OUTER JOIN questions as Q ON S.id = Q.sections_id where S.categories_id=$categoryId GROUP BY Q.sections_id');
   }
 
-  Future<List<Map<String, dynamic>>> getCurrentServiceProviderOfEmpl(
-      String table, int idSerPro) async {
+  Future<int> update(
+      String table, Map<String, dynamic> map, List? argsWhere) async {
     Database db = await getDb();
 
-    return await db.rawQuery(
-        'SELECT  serviceproccess.id, serviceproccess.start, serviceproccess.end,clients.firstName as firstNameClient,clients.lastName as lastNameClient,services.name,services.price FROM serviceproccess INNER JOIN clients ON serviceproccess.idClient = clients.id INNER JOIN services ON serviceproccess.idService = services.id where serviceproccess.id=$idSerPro');
+    return await db.update(table, map, where: 'id = ?', whereArgs: argsWhere);
   }
-
-  Future<List<Map<String, dynamic>>> getProccesingAssignEmpl(
-      String table, int idEmp) async {
-    Database db = await getDb();
-    return await db.rawQuery(
-        'SELECT DISTINCT serviceproccess.id, work.* FROM $table INNER JOIN serviceproccess ON serviceproccess.id = work.idserviceproccess where idEmployee=$idEmp');
-  }
-
-  Future<List<Map<String, dynamic>>> getServiceProData(int idEmp) async {
-    Database db = await getDb();
-    return await db.rawQuery(
-        'SELECT work.*,serviceproccess.* FROM work INNER JOIN serviceproccess ON serviceproccess.id = work.idserviceproccess  where idEmployee=$idEmp');
-  }
-
-  Future<List<Map<String, dynamic>>> getPrices(int idService) async {
-    Database db = await getDb();
-    return await db.rawQuery('SELECT * FROM services where id=$idService');
-  }
-
-  Future<List<Map<String, dynamic>>> getAbsence(int idService) async {
-    Database db = await getDb();
-    return await db.rawQuery('SELECT *  FROM services where id=$idService');
-  }
-
-  // Future<int> updateClient(Clients client) async {
-  //   Database db = await instance.database;
-  //   int id = client.id;
-
-  //   return await db
-  //       .update("clients", client.toMap(), where: 'id = ?', whereArgs: [id]);
-  // }
-
-  // Future<int> updateEmpl(Employees emp) async {
-  //   Database db = await instance.database;
-  //   int id = emp.id;
-
-  //   return await db
-  //       .update("employees", emp.toMap(), where: 'id = ?', whereArgs: [id]);
-  // }
 
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:question_answear_app/constansts.dart';
+import 'package:question_answear_app/core/presentation/font_manager.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
 import 'package:question_answear_app/pages/admin/section/domain/section.dart';
@@ -22,8 +24,8 @@ class SectionView extends GetView<SectionController> {
             bottom: TabBar(
               controller: controller.tabController,
               labelColor: Colors.white,
-              unselectedLabelColor: Colors.black,
-              indicatorColor: Colors.blueAccent,
+              unselectedLabelColor: Colors.grey.shade400,
+              indicatorColor: Colors.yellow,
               labelStyle: TextStyle(fontSize: 22),
               unselectedLabelStyle: TextStyle(fontSize: 20),
               // indicator: BoxDecoration(
@@ -66,17 +68,21 @@ class SectionView extends GetView<SectionController> {
                                       ]),
                                   child: Column(
                                     children: <Widget>[
-                                      SizedBox(
-                                        height: 50,
-                                        child: Wrap(
-                                          children: [
-                                            ...Get.find<HomeController>()
-                                                .items
-                                                .map((e) =>
-                                                    buildCategory(e, context))
-                                          ],
-                                        ),
+                                      Text(
+                                        controller.category?.name ?? '',
+                                        style: FontManager.primaryStyle,
                                       ),
+                                      // SizedBox(
+                                      //   height: 50,
+                                      //   child: Wrap(
+                                      //     children: [
+                                      //       ...Get.find<HomeController>()
+                                      //           .items
+                                      //           .map((e) =>
+                                      //               buildCategory(e, context))
+                                      //     ],
+                                      //   ),
+                                      // ),
                                       Container(
                                         padding: EdgeInsets.all(8.0),
                                         decoration: BoxDecoration(
@@ -119,7 +125,7 @@ class SectionView extends GetView<SectionController> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    color: Colors.blue,
+                                    color: primaryColor,
                                     elevation: 4,
                                     minWidth: 200,
                                     height: 50,
@@ -202,9 +208,10 @@ class SectionView extends GetView<SectionController> {
         child: Container(
           padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
           decoration: BoxDecoration(
-              color: i == controller.indexCategory ? Colors.blue : Colors.white,
+              color:
+                  i == controller.indexCategory ? primaryColor : Colors.white,
               borderRadius: BorderRadius.circular(25),
-              border: Border.all(width: 2, color: Colors.blue)),
+              border: Border.all(width: 2, color: primaryColor)),
           child: Text(
             category.name ?? "",
             style: TextStyle(
@@ -246,6 +253,19 @@ class SectionView extends GetView<SectionController> {
                 decoration: BoxDecoration(
                     color: Colors.green[50], shape: BoxShape.circle),
                 child: const Icon(Icons.upload_outlined, color: Colors.green)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () {
+              controller.delete(section.id);
+            },
+            child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                    color: Colors.red[50], shape: BoxShape.circle),
+                child: const Icon(Icons.cancel_outlined, color: Colors.red)),
           ),
         ),
         Padding(

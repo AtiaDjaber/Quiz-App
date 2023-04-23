@@ -17,7 +17,7 @@ class HomeController extends GetxController {
   }
 
   getData() async {
-    items = await categoryRepository.getData(tableCategories);
+    items = await categoryRepository.getDataWithCount(tableCategories);
     update();
   }
 }
