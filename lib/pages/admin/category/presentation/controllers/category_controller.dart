@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/core/widget/delete_dialog.dart';
+import 'package:question_answear_app/core/widget/info_dialog.dart';
 import 'package:question_answear_app/dbhelper.dart';
 import 'package:question_answear_app/pages/admin/category/data/category_respository.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
@@ -40,6 +41,7 @@ class CategoryController extends GetxController
     try {
       final id = await categoryRepository.insert(tableCategories, row);
       getData();
+      showInfoDialog();
       if (homeController != null) {
         homeController.getData();
       }
@@ -64,7 +66,7 @@ class CategoryController extends GetxController
 
       getData();
       if (homeController != null) {
-        homeController.update();
+        homeController.getData();
       }
     }
   }

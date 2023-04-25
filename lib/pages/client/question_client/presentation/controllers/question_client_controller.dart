@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/constansts.dart';
 import 'package:question_answear_app/pages/admin/question/domain/question.dart';
+import 'package:question_answear_app/pages/admin/section/data/section_respository.dart';
 import 'package:question_answear_app/pages/admin/section/domain/section.dart';
 import 'package:question_answear_app/pages/admin/question/data/question_respository.dart';
 
@@ -14,13 +15,14 @@ class QuestionClientController extends GetxController {
   Section selectedSection = Section();
 
   final repository = Get.put<QuestionRepository>(QuestionRepositoryImp());
+  final sectionRepository = Get.put<SectionRepository>(SectionRepositoryImp());
 
   // File? photo;
   var index = 0;
   Section? section;
   int? indexSection;
   int indexQuestion = 0;
-  int position = 1;
+  // int position = 1;
 
   int counter = 60;
   List<Answer> answers = [];
@@ -32,11 +34,13 @@ class QuestionClientController extends GetxController {
   @override
   void onInit() {
     section = (Get.arguments as Map)["section"];
-
-    position = indexQuestion + 1;
-    getData(Get.arguments["status"] as int).then((value) {
+    int status = Get.arguments["status"] as int;
+    getData(status).then((value) {
       if (items.isNotEmpty) {
-        getAnswer(items[0].id!);
+        if (status == 1) {
+          indexQuestion = section?.indexLastQuestion ?? 0;
+        }
+        getAnswer(items[indexQuestion].id!);
         startTimer();
       }
     });
@@ -82,8 +86,14 @@ class QuestionClientController extends GetxController {
   }
 
   Future getData(int argument) async {
-    items = await repository.getData(tableQuestions,
-        "sections_id = ? AND answered = ?", [section!.id!, argument]);
+    if (argument == 2 || argument == 1) {
+      items = await repository
+          .getData(tableQuestions, "sections_id = ?", [section!.id!]);
+    } else {
+      items = await repository.getData(tableQuestions,
+          "sections_id = ? AND answered = ?", [section!.id!, argument]);
+    }
+
     update();
   }
 
@@ -92,7 +102,12 @@ class QuestionClientController extends GetxController {
     answers = await repository
         .getAnswer(tableAnswers, "questions_id = ?", [questionId]);
     answers.shuffle();
+
     restartTimer();
+
+    section?.indexLastQuestion = indexQuestion;
+    sectionRepository
+        .updateData(tableSections, section!.toMap(), [section!.id]);
   }
 
   updateImage(Question item) async {
@@ -106,26 +121,6 @@ class QuestionClientController extends GetxController {
 
       update();
     }
-  }
-
-  getBorder(e) {
-    return selectedAnswer != null
-        ? (e.isValid == 1
-            ? Border.all(color: primaryColor, width: 1.2)
-            : selectedAnswer?.id == e.id
-                ? Border.all(color: Colors.red, width: 1.2)
-                : Border.all(color: Colors.grey.shade300, width: 1.2))
-        : Border.all(color: Colors.grey.shade300, width: 1.2);
-  }
-
-  getIcon(e) {
-    return selectedAnswer != null
-        ? (e.isValid == 1
-            ? const Icon(Icons.check_circle, color: primaryColor)
-            : selectedAnswer?.id == e.id
-                ? const Icon(Icons.cancel, color: Colors.red)
-                : Icon(Icons.circle_outlined, color: Colors.grey.shade300))
-        : Icon(Icons.circle_outlined, color: Colors.grey.shade300);
   }
 
   void setAnswer(Answer e) {

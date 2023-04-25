@@ -172,7 +172,7 @@ class SectionClientView extends GetView<SectionClientController> {
                       onPressed: () => Get.toNamed(AppRoutes.questionClient,
                           arguments: {
                             "section": controller.items[index],
-                            "status": 2
+                            "status": 1
                           }),
                     ),
                     CustomElevatedButton(
@@ -181,7 +181,7 @@ class SectionClientView extends GetView<SectionClientController> {
                       onPressed: () => Get.toNamed(AppRoutes.questionClient,
                           arguments: {
                             "section": controller.items[index],
-                            "status": 1
+                            "status": 2
                           }),
                     ),
                     CustomElevatedButton(

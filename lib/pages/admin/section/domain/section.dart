@@ -2,6 +2,7 @@ const String idSection = "id";
 const String nameSection = "name";
 const String progressSection = "progress";
 const String categoryIdSection = "categories_id";
+const String indexLastQuestionSection = "index_last_question";
 const String tableSections = 'sections';
 
 class Section {
@@ -10,7 +11,13 @@ class Section {
   int? categoryId;
   double? progress;
   int? questionCount;
-  Section({this.id, this.name, this.questionCount, this.categoryId});
+  int? indexLastQuestion;
+  Section(
+      {this.id,
+      this.name,
+      this.indexLastQuestion,
+      this.questionCount,
+      this.categoryId});
 
   Section.fromMap(Map<String, dynamic> map) {
     id = map['id'];
@@ -18,6 +25,7 @@ class Section {
     progress = double.tryParse(map['progress']);
     categoryId = map['categories_id'];
     questionCount = map['question_count'];
+    indexLastQuestion = map[indexLastQuestionSection];
   }
 
   Map<String, dynamic> toMap() {
@@ -26,6 +34,7 @@ class Section {
       nameSection: name,
       progressSection: progress,
       categoryIdSection: categoryId,
+      indexLastQuestionSection: indexLastQuestion
     };
   }
 }

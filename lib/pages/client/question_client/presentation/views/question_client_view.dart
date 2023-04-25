@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/constansts.dart';
+import 'package:question_answear_app/core/helper/helper_function.dart';
 import 'package:question_answear_app/core/presentation/font_manager.dart';
 import 'package:question_answear_app/core/widget/app_bar.dart';
 import 'package:question_answear_app/core/widget/bubble_widget.dart';
@@ -21,14 +22,13 @@ class QuestionClientView extends GetView<QuestionClientController> {
 
   @override
   Widget build(BuildContext context) {
-    int count = controller.items.length;
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
             backgroundColor: backgroundColor,
             appBar: CustomAppBar(title: controller.section?.name ?? ""),
             body: GetBuilder<QuestionClientController>(builder: (context) {
-              return controller.items.length > 0
+              return controller.items.isNotEmpty
                   ? Stack(
                       children: [
                         Container(
@@ -72,7 +72,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                         BoxShadow(
                                             color:
                                                 primaryColor.withOpacity(0.3),
-                                            offset: Offset(0, 1),
+                                            offset: const Offset(0, 1),
                                             blurRadius: 20,
                                             spreadRadius: 1)
                                       ],
@@ -107,15 +107,15 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                           //   ],
                                           // ),
 
-                                          SizedBox(height: 30),
+                                          const SizedBox(height: 30),
                                           Text(
-                                            "Question ${controller.indexQuestion} / ${controller.items.length}",
+                                            "Question ${controller.indexQuestion + 1} / ${controller.items.length}",
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: primaryColor,
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           InkWell(
                                             onTap: () => controller.updateImage(
                                                 controller.items[
@@ -143,7 +143,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                           Text(
                                             controller
                                                     .items[controller
@@ -156,7 +156,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.grey.shade800),
                                           ),
-                                          SizedBox(height: 10),
+                                          const SizedBox(height: 10),
                                         ],
                                       ),
                                     ),
@@ -216,7 +216,8 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                           color: Colors.white,
                                           borderRadius:
                                               BorderRadius.circular(14),
-                                          border: controller.getBorder(e)),
+                                          border: getBorder(
+                                              e, controller.selectedAnswer)),
                                       child: Padding(
                                         padding: const EdgeInsets.fromLTRB(
                                             14, 8, 14, 8),
@@ -237,7 +238,10 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                               height: 20,
                                               width: 20,
                                               child: Center(
-                                                  child: controller.getIcon(e)),
+                                                  child: getIcon(
+                                                      e,
+                                                      controller
+                                                          .selectedAnswer)),
                                             )
                                           ],
                                         ),
@@ -252,44 +256,57 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: [
-                                        CustomElevatedButton(
-                                          title: "السابق",
-                                          backgroundColor: Colors.grey.shade300,
-                                          foregroundColor: Colors.grey.shade700,
-                                          iconData: Icons.arrow_back_ios,
-                                          onPressed: () {
-                                            if (controller.position > 0) {
-                                              controller.indexQuestion =
-                                                  controller.indexQuestion - 1;
+                                        controller.indexQuestion > 0
+                                            ? CustomElevatedButton(
+                                                title: "السابق",
+                                                backgroundColor:
+                                                    Colors.grey.shade300,
+                                                foregroundColor:
+                                                    Colors.grey.shade700,
+                                                iconData: Icons.arrow_back_ios,
+                                                onPressed: () {
+                                                  if (controller.indexQuestion >
+                                                      0) {
+                                                    controller.indexQuestion =
+                                                        controller
+                                                                .indexQuestion -
+                                                            1;
 
-                                              controller.position =
-                                                  controller.position - 1;
-                                              controller.getAnswer(controller
-                                                  .items[
-                                                      controller.indexQuestion]
-                                                  .id!);
-                                            }
-                                          },
-                                        ),
-                                        CustomElevatedButton(
-                                          title: "التالي",
-                                          iconData: Icons.arrow_forward_ios,
-                                          foregroundColor: Colors.white,
-                                          onPressed: () {
-                                            if (count - 1 >
-                                                controller.position) {
-                                              controller.indexQuestion =
-                                                  controller.indexQuestion + 1;
+                                                    controller.getAnswer(
+                                                        controller
+                                                            .items[controller
+                                                                .indexQuestion]
+                                                            .id!);
+                                                  }
+                                                },
+                                              )
+                                            : const SizedBox(),
+                                        (controller.indexQuestion + 1) <
+                                                controller.items.length
+                                            ? CustomElevatedButton(
+                                                title: "التالي",
+                                                iconData:
+                                                    Icons.arrow_forward_ios,
+                                                foregroundColor: Colors.white,
+                                                onPressed: () {
+                                                  if (controller.items.length -
+                                                          1 >
+                                                      controller
+                                                          .indexQuestion) {
+                                                    controller.indexQuestion =
+                                                        controller
+                                                                .indexQuestion +
+                                                            1;
 
-                                              controller.position =
-                                                  controller.position + 1;
-                                              controller.getAnswer(controller
-                                                  .items[
-                                                      controller.indexQuestion]
-                                                  .id!);
-                                            }
-                                          },
-                                        ),
+                                                    controller.getAnswer(
+                                                        controller
+                                                            .items[controller
+                                                                .indexQuestion]
+                                                            .id!);
+                                                  }
+                                                },
+                                              )
+                                            : const SizedBox(),
                                       ],
                                     ),
                                   )
@@ -298,8 +315,23 @@ class QuestionClientView extends GetView<QuestionClientController> {
                         ),
                       ],
                     )
-                  : Column(
-                      children: [],
+                  : Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "لا توجد اسئلة",
+                            style: FontManager.primaryStyle,
+                          ),
+                          const SizedBox(height: 20),
+                          const Icon(
+                            Icons.not_listed_location_sharp,
+                            color: Colors.grey,
+                            size: 42,
+                          )
+                        ],
+                      ),
                     );
               //  ListView.builder(
               //   itemCount: controller.items.length,

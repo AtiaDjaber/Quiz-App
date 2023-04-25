@@ -4,6 +4,7 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:question_answear_app/core/widget/delete_dialog.dart';
+import 'package:question_answear_app/core/widget/info_dialog.dart';
 import 'package:question_answear_app/dbhelper.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/admin/category/presentation/controllers/category_controller.dart';
@@ -53,9 +54,11 @@ class SectionController extends GetxController
     selectedSection.name = nameContr.text;
     selectedSection.progress = 0;
     selectedSection.categoryId = category?.id;
+    selectedSection.indexLastQuestion = 0;
     try {
       final id = await sectionRepository.insert(selectedSection.toMap());
       getData();
+      showInfoDialog();
     } catch (e) {
       print(e);
     }
@@ -103,8 +106,7 @@ class SectionController extends GetxController
             print(row[0]);
           }
         }
-        // var excel = Excel.decodeBytes(bytes);
-
+        showInfoDialog();
       }
     } else {
       // User canceled the picker

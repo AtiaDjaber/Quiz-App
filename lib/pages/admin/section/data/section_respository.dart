@@ -5,6 +5,8 @@ abstract class SectionRepository {
   Future<List<Section>> getData(int categoryId);
   Future<List<Section>> getDataWithCount(int categoryId);
   Future<int> insert(Map<String, dynamic> row);
+  Future<int> updateData(
+      String tableName, Map<String, dynamic> map, List<dynamic> args);
 }
 
 class SectionRepositoryImp extends SectionRepository {
@@ -36,5 +38,11 @@ class SectionRepositoryImp extends SectionRepository {
       items.add(cli);
     }
     return items;
+  }
+
+  @override
+  Future<int> updateData(
+      String tableName, Map<String, dynamic> map, List args) async {
+    return await dbHelper.update(tableName, map, args);
   }
 }

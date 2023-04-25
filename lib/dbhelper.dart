@@ -7,7 +7,7 @@ import 'pages/admin/category/domain/category.dart';
 
 class DatabaseHelper {
   //////////////////////////////
-  static const _databaseName = "quiz2.db";
+  static const _databaseName = "quiz6.db";
   static const _databaseVersion = 1;
 
   static const String id = "id";
@@ -58,6 +58,7 @@ class DatabaseHelper {
             $id INTEGER PRIMARY KEY AUTOINCREMENT,
             $nameSection TEXT NOT NULL,
             $categoryIdSection INTEGER NOT NULL,
+            $indexLastQuestionSection INTEGER NOT NULL,
             $progressSection TEXT NOT NULL,
             FOREIGN KEY ($categoryIdSection) REFERENCES categories(id) ON DELETE CASCADE
           )
