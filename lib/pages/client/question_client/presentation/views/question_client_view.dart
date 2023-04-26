@@ -34,7 +34,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                         Container(
                           height: 150,
                           width: double.infinity,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               color: primaryColor,
                               borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(20),
@@ -42,7 +42,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                         ),
                         ListView(
                           children: [
-                            SizedBox(height: 40),
+                            const SizedBox(height: 40),
                             Padding(
                               padding: const EdgeInsets.all(14),
                               child: Stack(

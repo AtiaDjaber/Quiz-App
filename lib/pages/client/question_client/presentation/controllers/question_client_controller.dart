@@ -9,6 +9,7 @@ import 'package:question_answear_app/pages/admin/question/domain/question.dart';
 import 'package:question_answear_app/pages/admin/section/data/section_respository.dart';
 import 'package:question_answear_app/pages/admin/section/domain/section.dart';
 import 'package:question_answear_app/pages/admin/question/data/question_respository.dart';
+import 'package:question_answear_app/pages/client/section_client/presentation/controllers/section_client_controller.dart';
 
 class QuestionClientController extends GetxController {
   List<Question> items = [];
@@ -17,13 +18,11 @@ class QuestionClientController extends GetxController {
   final repository = Get.put<QuestionRepository>(QuestionRepositoryImp());
   final sectionRepository = Get.put<SectionRepository>(SectionRepositoryImp());
 
-  // File? photo;
   var index = 0;
   Section? section;
   int? indexSection;
   int indexQuestion = 0;
-  // int position = 1;
-
+  int questionCount = 0;
   int counter = 60;
   List<Answer> answers = [];
   Timer? countdownTimer;
@@ -86,13 +85,18 @@ class QuestionClientController extends GetxController {
   }
 
   Future getData(int argument) async {
-    if (argument == 2 || argument == 1) {
-      items = await repository
-          .getData(tableQuestions, "sections_id = ?", [section!.id!]);
-    } else {
-      items = await repository.getData(tableQuestions,
-          "sections_id = ? AND answered = ?", [section!.id!, argument]);
+    // if (argument == 2 || argument == 1) {
+    items = await repository
+        .getData(tableQuestions, "sections_id = ?", [section!.id!]);
+    questionCount = items.length;
+    //
+    if (argument == 0) {
+      items = items.where((e) => e.answered == 0).toList();
     }
+    // } else {
+    //   items = await repository.getData(tableQuestions,
+    //       "sections_id = ? AND answered = ?", [section!.id!, argument]);
+    // }
 
     update();
   }
@@ -123,13 +127,23 @@ class QuestionClientController extends GetxController {
     }
   }
 
+  double calculateProgress(int errorQuestionCount) {
+    return errorQuestionCount * 100 / questionCount;
+  }
+
   void setAnswer(Answer e) {
     if (selectedAnswer == null) {
       selectedAnswer = e;
       var item = items[indexQuestion];
       item.answered = e.isValid == 1 ? 1 : 0;
+
+      section?.progress = 100 -
+          calculateProgress(
+              items.where((element) => element.answered == 0).length);
+      repository.updateData(tableSections, section!.toMap(), [section?.id]);
       repository.updateData(tableQuestions, item.toMap(), [item.id]);
       update();
+      Get.find<SectionClientController>().getData();
     }
   }
 }

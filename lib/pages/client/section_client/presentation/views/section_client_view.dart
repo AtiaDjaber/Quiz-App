@@ -147,18 +147,33 @@ class SectionClientView extends GetView<SectionClientController> {
                     ],
                   ),
                   trailing: Container(
-                    height: 60,
-                    width: 60,
+                    height: 40,
+                    width: 40,
                     decoration: BoxDecoration(
                         color: Colors.white, shape: BoxShape.circle),
                     child: Center(
                       child: SizedBox(
                         height: 40,
                         width: 40,
-                        child: CircularProgressIndicator(
-                          value: 0.5,
-                          color: primaryColor,
-                          backgroundColor: Colors.grey.shade200,
+                        child: Stack(
+                          children: [
+                            CircularProgressIndicator(
+                              value: controller.items[index].progress!.ceil() /
+                                  100,
+                              color: primaryColor,
+                              backgroundColor: Colors.grey.shade200,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "${controller.items[index].progress!.ceil()}%",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: primaryColor),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     ),
@@ -175,6 +190,7 @@ class SectionClientView extends GetView<SectionClientController> {
                             "status": 1
                           }),
                     ),
+                    const SizedBox(width: 10),
                     CustomElevatedButton(
                       title: "إعادة",
                       backgroundColor: Colors.green,
@@ -184,6 +200,7 @@ class SectionClientView extends GetView<SectionClientController> {
                             "status": 2
                           }),
                     ),
+                    const SizedBox(width: 10),
                     CustomElevatedButton(
                       title: "إعادة الأسئلة الخطأ",
                       backgroundColor: Colors.red,
