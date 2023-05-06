@@ -183,7 +183,7 @@ class SectionClientView extends GetView<SectionClientController> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     CustomElevatedButton(
-                      title: "استكمال",
+                      title: "بدء",
                       onPressed: () => Get.toNamed(AppRoutes.questionClient,
                           arguments: {
                             "section": controller.items[index],
@@ -193,7 +193,7 @@ class SectionClientView extends GetView<SectionClientController> {
                     const SizedBox(width: 10),
                     CustomElevatedButton(
                       title: "إعادة",
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.blue,
                       onPressed: () => Get.toNamed(AppRoutes.questionClient,
                           arguments: {
                             "section": controller.items[index],

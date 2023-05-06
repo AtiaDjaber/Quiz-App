@@ -143,7 +143,7 @@ class HomeView extends GetView<HomeController> {
                 /// Home
                 SalomonBottomBarItem(
                   icon: Icon(Icons.home_outlined),
-                  title: Text("Home"),
+                  title: Text("الرئيسية"),
                   selectedColor: Colors.purple,
                 ),
 
@@ -155,11 +155,11 @@ class HomeView extends GetView<HomeController> {
                 ),
 
                 /// Search
-                SalomonBottomBarItem(
-                  icon: Icon(Icons.search),
-                  title: Text("Search"),
-                  selectedColor: Colors.orange,
-                ),
+                // SalomonBottomBarItem(
+                //   icon: Icon(Icons.search),
+                //   title: Text("Search"),
+                //   selectedColor: Colors.orange,
+                // ),
               ],
             );
           }),

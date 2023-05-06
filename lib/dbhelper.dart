@@ -104,7 +104,7 @@ class DatabaseHelper {
       table,
       where: where,
       whereArgs: argsWhere,
-      orderBy: "id Desc",
+      orderBy: "id asc",
     );
   }
 

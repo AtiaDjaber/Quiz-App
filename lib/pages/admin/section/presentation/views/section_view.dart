@@ -268,23 +268,23 @@ class SectionView extends GetView<SectionController> {
                 child: const Icon(Icons.cancel_outlined, color: Colors.red)),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () {
-              controller.editOrAdd = "تعديل";
-              controller.selectedSection = section;
-              controller.nameContr.text = section.name ?? "";
-              controller.update();
-              controller.tabController.animateTo(0);
-            },
-            child: Container(
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                    color: Colors.green[50], shape: BoxShape.circle),
-                child: const Icon(Icons.edit, color: Colors.green)),
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: InkWell(
+        //     onTap: () {
+        //       controller.editOrAdd = "تعديل";
+        //       controller.selectedSection = section;
+        //       controller.nameContr.text = section.name ?? "";
+        //       controller.update();
+        //       controller.tabController.animateTo(0);
+        //     },
+        //     child: Container(
+        //         padding: const EdgeInsets.all(8.0),
+        //         decoration: BoxDecoration(
+        //             color: Colors.green[50], shape: BoxShape.circle),
+        //         child: const Icon(Icons.edit, color: Colors.green)),
+        //   ),
+        // ),
       ]),
     );
   }

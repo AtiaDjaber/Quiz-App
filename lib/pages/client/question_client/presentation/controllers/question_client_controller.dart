@@ -29,7 +29,8 @@ class QuestionClientController extends GetxController {
   Duration myDuration = const Duration(seconds: 60);
 
   Answer? selectedAnswer;
-
+  bool showResult = false;
+  Map<String, double> dataMap = {};
   @override
   void onInit() {
     section = (Get.arguments as Map)["section"];
@@ -72,12 +73,9 @@ class QuestionClientController extends GetxController {
 
   void setCountDown() {
     if (counter <= 0) {
-      countdownTimer!.cancel();
+      countdownTimer?.cancel();
       selectedAnswer = answers.firstWhere((element) => element.isValid == 1);
-      var item = items[indexQuestion];
-      item.answered = 0;
-      repository.updateData(tableQuestions, item.toMap(), [item.id]);
-      update();
+      setAnswer(selectedAnswer!);
     } else {
       counter = counter - 1;
     }
@@ -142,6 +140,21 @@ class QuestionClientController extends GetxController {
               items.where((element) => element.answered == 0).length);
       repository.updateData(tableSections, section!.toMap(), [section?.id]);
       repository.updateData(tableQuestions, item.toMap(), [item.id]);
+      if (items.length - 1 == indexQuestion) {
+        showResult = true;
+        dataMap = {
+          "الصحيحة": items
+              .where((element) => element.answered == 1)
+              .toList()
+              .length
+              .toDouble(),
+          "الخاطئة": items
+              .where((element) => element.answered == 0)
+              .toList()
+              .length
+              .toDouble()
+        };
+      }
       update();
       Get.find<SectionClientController>().getData();
     }

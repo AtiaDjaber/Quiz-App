@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pie_chart/pie_chart.dart';
 import 'package:question_answear_app/constansts.dart';
 import 'package:question_answear_app/core/helper/helper_function.dart';
 import 'package:question_answear_app/core/presentation/font_manager.dart';
@@ -29,292 +30,364 @@ class QuestionClientView extends GetView<QuestionClientController> {
             appBar: CustomAppBar(title: controller.section?.name ?? ""),
             body: GetBuilder<QuestionClientController>(builder: (context) {
               return controller.items.isNotEmpty
-                  ? Stack(
-                      children: [
-                        Container(
-                          height: 150,
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                              color: primaryColor,
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(20),
-                                  bottomRight: Radius.circular(20))),
-                        ),
-                        ListView(
+                  ? controller.showResult
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(height: 40),
-                            Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  const Positioned(
-                                      top: -50,
-                                      left: -50,
-                                      child: BubbleWidget()),
-                                  const Positioned(
-                                      top: -70,
-                                      right: -70,
-                                      child: BubbleWidget(
-                                        width: 90,
-                                      )),
-                                  const Positioned(
-                                      top: -100,
-                                      right: 70,
-                                      child: BubbleWidget(
-                                        width: 40,
-                                      )),
-                                  Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color:
-                                                primaryColor.withOpacity(0.3),
-                                            offset: const Offset(0, 1),
-                                            blurRadius: 20,
-                                            spreadRadius: 1)
-                                      ],
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        children: [
-                                          // Row(
-                                          //   mainAxisAlignment:
-                                          //       MainAxisAlignment.spaceBetween,
-                                          //   children: [
-                                          //     Text(
-                                          //       "8",
-                                          //       textAlign: TextAlign.center,
-                                          //       style: TextStyle(
-                                          //           fontSize: 18,
-                                          //           fontWeight: FontWeight.w600,
-                                          //           color:
-                                          //               Colors.grey.shade800),
-                                          //     ),
-                                          //     Text(
-                                          //       "8",
-                                          //       textAlign: TextAlign.center,
-                                          //       style: TextStyle(
-                                          //           fontSize: 18,
-                                          //           fontWeight: FontWeight.w600,
-                                          //           color:
-                                          //               Colors.grey.shade800),
-                                          //     )
-                                          //   ],
-                                          // ),
+                            Text(
+                              "نتيجة الاختبار",
+                              style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor),
+                            ),
+                            SizedBox(height: 40),
+                            PieChart(
+                              dataMap: controller.dataMap,
+                              animationDuration: Duration(milliseconds: 800),
+                              chartLegendSpacing: 42,
+                              chartRadius: Get.width / 3.2,
+                              colorList: [Colors.green, Colors.red],
+                              initialAngleInDegree: 0,
+                              chartType: ChartType.ring,
+                              ringStrokeWidth: 32,
+                              // totalValue: controller.items.length.toDouble(),
+                              centerText: controller.items.length.toString(),
+                              centerTextStyle:
+                                  TextStyle(fontSize: 22, color: primaryColor),
+                              legendOptions: const LegendOptions(
+                                showLegendsInRow: false,
+                                legendPosition: LegendPosition.top,
+                                showLegends: true,
+                                legendShape: BoxShape.circle,
+                                legendTextStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              chartValuesOptions: ChartValuesOptions(
+                                showChartValueBackground: true,
+                                showChartValues: true,
+                                showChartValuesInPercentage: false,
+                                showChartValuesOutside: false,
+                                decimalPlaces: 0,
+                              ),
+                              // gradientList: ---To add gradient colors---
+                              // emptyColorGradient: ---Empty Color gradient---
+                            ),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            Container(
+                              height: 150,
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                  color: primaryColor,
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(20))),
+                            ),
+                            ListView(
+                              children: [
+                                const SizedBox(height: 40),
+                                Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      const Positioned(
+                                          top: -50,
+                                          left: -50,
+                                          child: BubbleWidget()),
+                                      const Positioned(
+                                          top: -70,
+                                          right: -70,
+                                          child: BubbleWidget(
+                                            width: 90,
+                                          )),
+                                      const Positioned(
+                                          top: -100,
+                                          right: 70,
+                                          child: BubbleWidget(
+                                            width: 40,
+                                          )),
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: primaryColor
+                                                    .withOpacity(0.3),
+                                                offset: const Offset(0, 1),
+                                                blurRadius: 20,
+                                                spreadRadius: 1)
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Column(
+                                            children: [
+                                              // Row(
+                                              //   mainAxisAlignment:
+                                              //       MainAxisAlignment.spaceBetween,
+                                              //   children: [
+                                              //     Text(
+                                              //       "8",
+                                              //       textAlign: TextAlign.center,
+                                              //       style: TextStyle(
+                                              //           fontSize: 18,
+                                              //           fontWeight: FontWeight.w600,
+                                              //           color:
+                                              //               Colors.grey.shade800),
+                                              //     ),
+                                              //     Text(
+                                              //       "8",
+                                              //       textAlign: TextAlign.center,
+                                              //       style: TextStyle(
+                                              //           fontSize: 18,
+                                              //           fontWeight: FontWeight.w600,
+                                              //           color:
+                                              //               Colors.grey.shade800),
+                                              //     )
+                                              //   ],
+                                              // ),
 
-                                          const SizedBox(height: 30),
-                                          Text(
-                                            "Question ${controller.indexQuestion + 1} / ${controller.items.length}",
-                                            style: TextStyle(
-                                                fontSize: 16,
-                                                color: primaryColor,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          InkWell(
-                                            onTap: () => controller.updateImage(
-                                                controller.items[
-                                                    controller.indexQuestion]),
-                                            child: Container(
-                                              height: 110,
-                                              width: 200,
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey.shade100,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                image: controller
-                                                            .items[controller
-                                                                .indexQuestion]
-                                                            .photo ==
-                                                        null
-                                                    ? null
-                                                    : DecorationImage(
-                                                        image: FileImage(File(
-                                                            controller
+                                              const SizedBox(height: 30),
+                                              Text(
+                                                "Question ${controller.indexQuestion + 1} / ${controller.items.length}",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: primaryColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              InkWell(
+                                                onTap: () => controller
+                                                    .updateImage(controller
+                                                            .items[
+                                                        controller
+                                                            .indexQuestion]),
+                                                child: Container(
+                                                  height: 110,
+                                                  width: 200,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.grey.shade100,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    image: controller
                                                                 .items[controller
                                                                     .indexQuestion]
-                                                                .photo!)),
-                                                        fit: BoxFit.fill),
+                                                                .photo ==
+                                                            null
+                                                        ? null
+                                                        : DecorationImage(
+                                                            image: FileImage(
+                                                                File(controller
+                                                                    .items[controller
+                                                                        .indexQuestion]
+                                                                    .photo!)),
+                                                            fit: BoxFit.fill),
+                                                  ),
+                                                  child: controller
+                                                              .items[controller
+                                                                  .indexQuestion]
+                                                              .photo !=
+                                                          null
+                                                      ? SizedBox()
+                                                      : Center(
+                                                          child: Icon(
+                                                          Icons.image_outlined,
+                                                          color: Colors.grey,
+                                                          size: 40,
+                                                        )),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                controller
+                                                        .items[controller
+                                                            .indexQuestion]
+                                                        .name ??
+                                                    "",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.bold,
+                                                    color:
+                                                        Colors.grey.shade800),
+                                              ),
+                                              const SizedBox(height: 10),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -35,
+                                        left: 10,
+                                        right: 10,
+                                        child: Container(
+                                          height: 70,
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle),
+                                          child: Center(
+                                            child: SizedBox(
+                                              height: 50,
+                                              width: 50,
+                                              child: CircularProgressIndicator(
+                                                value: controller.counter / 60,
+                                                color: primaryColor,
+                                                backgroundColor:
+                                                    Colors.grey.shade200,
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            controller
-                                                    .items[controller
-                                                        .indexQuestion]
-                                                    .name ??
-                                                "",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey.shade800),
-                                          ),
-                                          const SizedBox(height: 10),
-                                        ],
+                                        ),
                                       ),
-                                    ),
+                                      Positioned(
+                                        top: -15,
+                                        left: 10,
+                                        right: 10,
+                                        child: Container(
+                                            width: 30,
+                                            child: Center(
+                                                child: Text(
+                                              controller.counter.toString(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: primaryColor),
+                                            ))),
+                                      )
+                                    ],
                                   ),
-                                  Positioned(
-                                    top: -35,
-                                    left: 10,
-                                    right: 10,
-                                    child: Container(
-                                      height: 70,
-                                      width: 70,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle),
-                                      child: Center(
-                                        child: SizedBox(
-                                          height: 50,
-                                          width: 50,
-                                          child: CircularProgressIndicator(
-                                            value: controller.counter / 60,
-                                            color: primaryColor,
-                                            backgroundColor:
-                                                Colors.grey.shade200,
+                                ),
+                                const SizedBox(height: 30),
+                                ...controller.answers.map((e) => InkWell(
+                                      onTap: () {
+                                        controller.setAnswer(e);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                              border: getBorder(e,
+                                                  controller.selectedAnswer)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                14, 8, 14, 8),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(e.name ?? "",
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: Colors
+                                                              .grey.shade800)),
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child: Center(
+                                                      child: getIcon(
+                                                          e,
+                                                          controller
+                                                              .selectedAnswer)),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: -15,
-                                    left: 10,
-                                    right: 10,
-                                    child: Container(
-                                        width: 30,
-                                        child: Center(
-                                            child: Text(
-                                          controller.counter.toString(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: primaryColor),
-                                        ))),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-                            ...controller.answers.map((e) => InkWell(
-                                  onTap: () {
-                                    controller.setAnswer(e);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                          border: getBorder(
-                                              e, controller.selectedAnswer)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            14, 8, 14, 8),
+                                    )),
+                                controller.selectedAnswer != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.all(2),
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.spaceAround,
                                           children: [
-                                            Expanded(
-                                              child: Text(e.name ?? "",
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Colors
-                                                          .grey.shade800)),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                              width: 20,
-                                              child: Center(
-                                                  child: getIcon(
-                                                      e,
-                                                      controller
-                                                          .selectedAnswer)),
-                                            )
+                                            controller.indexQuestion > 0
+                                                ? CustomElevatedButton(
+                                                    title: "السابق",
+                                                    backgroundColor:
+                                                        Colors.grey.shade300,
+                                                    foregroundColor:
+                                                        Colors.grey.shade700,
+                                                    iconData:
+                                                        Icons.arrow_back_ios,
+                                                    onPressed: () {
+                                                      if (controller
+                                                              .indexQuestion >
+                                                          0) {
+                                                        controller
+                                                                .indexQuestion =
+                                                            controller
+                                                                    .indexQuestion -
+                                                                1;
+
+                                                        controller.getAnswer(
+                                                            controller
+                                                                .items[controller
+                                                                    .indexQuestion]
+                                                                .id!);
+                                                      }
+                                                    },
+                                                  )
+                                                : const SizedBox(),
+                                            (controller.indexQuestion + 1) <
+                                                    controller.items.length
+                                                ? CustomElevatedButton(
+                                                    title: "التالي",
+                                                    iconData:
+                                                        Icons.arrow_forward_ios,
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    onPressed: () {
+                                                      if (controller.items
+                                                                  .length -
+                                                              1 >
+                                                          controller
+                                                              .indexQuestion) {
+                                                        controller
+                                                                .indexQuestion =
+                                                            controller
+                                                                    .indexQuestion +
+                                                                1;
+
+                                                        controller.getAnswer(
+                                                            controller
+                                                                .items[controller
+                                                                    .indexQuestion]
+                                                                .id!);
+                                                      }
+                                                    },
+                                                  )
+                                                : const SizedBox(),
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                            controller.selectedAnswer != null
-                                ? Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        controller.indexQuestion > 0
-                                            ? CustomElevatedButton(
-                                                title: "السابق",
-                                                backgroundColor:
-                                                    Colors.grey.shade300,
-                                                foregroundColor:
-                                                    Colors.grey.shade700,
-                                                iconData: Icons.arrow_back_ios,
-                                                onPressed: () {
-                                                  if (controller.indexQuestion >
-                                                      0) {
-                                                    controller.indexQuestion =
-                                                        controller
-                                                                .indexQuestion -
-                                                            1;
-
-                                                    controller.getAnswer(
-                                                        controller
-                                                            .items[controller
-                                                                .indexQuestion]
-                                                            .id!);
-                                                  }
-                                                },
-                                              )
-                                            : const SizedBox(),
-                                        (controller.indexQuestion + 1) <
-                                                controller.items.length
-                                            ? CustomElevatedButton(
-                                                title: "التالي",
-                                                iconData:
-                                                    Icons.arrow_forward_ios,
-                                                foregroundColor: Colors.white,
-                                                onPressed: () {
-                                                  if (controller.items.length -
-                                                          1 >
-                                                      controller
-                                                          .indexQuestion) {
-                                                    controller.indexQuestion =
-                                                        controller
-                                                                .indexQuestion +
-                                                            1;
-
-                                                    controller.getAnswer(
-                                                        controller
-                                                            .items[controller
-                                                                .indexQuestion]
-                                                            .id!);
-                                                  }
-                                                },
-                                              )
-                                            : const SizedBox(),
-                                      ],
-                                    ),
-                                  )
-                                : const SizedBox(),
+                                      )
+                                    : const SizedBox(),
+                              ],
+                            ),
                           ],
-                        ),
-                      ],
-                    )
+                        )
                   : Center(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
