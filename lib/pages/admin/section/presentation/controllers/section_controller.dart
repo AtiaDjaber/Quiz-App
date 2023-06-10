@@ -91,18 +91,29 @@ class SectionController extends GetxController
             // The Question
             int id = await questionRepository.insert(
                 tableQuestions,
-                Question(name: row[0], sectionId: section.id, answered: 0)
+                Question(
+                        name: row[0].toString(),
+                        sectionId: section.id,
+                        answered: 0)
                     .toMap());
             // True Answered
-            questionRepository.insert(tableAnswers,
-                Answer(name: row[1], questionId: id, isValid: 1).toMap());
+            questionRepository.insert(
+                tableAnswers,
+                Answer(name: row[1].toString(), questionId: id, isValid: 1)
+                    .toMap());
             // False Answered
-            questionRepository.insert(tableAnswers,
-                Answer(name: row[3], questionId: id, isValid: 0).toMap());
-            questionRepository.insert(tableAnswers,
-                Answer(name: row[4], questionId: id, isValid: 0).toMap());
-            questionRepository.insert(tableAnswers,
-                Answer(name: row[5], questionId: id, isValid: 0).toMap());
+            questionRepository.insert(
+                tableAnswers,
+                Answer(name: row[3].toString(), questionId: id, isValid: 0)
+                    .toMap());
+            questionRepository.insert(
+                tableAnswers,
+                Answer(name: row[4].toString(), questionId: id, isValid: 0)
+                    .toMap());
+            questionRepository.insert(
+                tableAnswers,
+                Answer(name: row[5].toString(), questionId: id, isValid: 0)
+                    .toMap());
             print(row[0]);
           }
         }

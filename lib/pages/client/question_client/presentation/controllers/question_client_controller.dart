@@ -18,6 +18,7 @@ class QuestionClientController extends GetxController {
   final repository = Get.put<QuestionRepository>(QuestionRepositoryImp());
   final sectionRepository = Get.put<SectionRepository>(SectionRepositoryImp());
 
+  bool isEditingAnswer = false;
   var index = 0;
   Section? section;
   int? indexSection;
@@ -112,15 +113,27 @@ class QuestionClientController extends GetxController {
         .updateData(tableSections, section!.toMap(), [section!.id]);
   }
 
-  updateImage(Question item) async {
-    FilePickerResult? result = await FilePicker.platform
+  FilePickerResult? result;
+
+  Future<FilePickerResult?> getFile() async {
+    return await FilePicker.platform
         .pickFiles(type: FileType.image, allowMultiple: false);
+  }
 
+  updateImageQuestion(Question item) async {
+    result = await getFile();
     if (result != null) {
-      item.photo = result.files.first.path;
+      item.photo = result?.files.first.path;
       repository.updateData(tableQuestions, item.toMap(), [item.id]);
-      // photo = File(result.files.first.path!);
+      update();
+    }
+  }
 
+  updateImageAnswer(Answer item) async {
+    result = await getFile();
+    if (result != null) {
+      item.name = result?.files.first.path;
+      repository.updateData(tableAnswers, item.toMap(), [item.id]);
       update();
     }
   }
@@ -158,5 +171,18 @@ class QuestionClientController extends GetxController {
       update();
       Get.find<SectionClientController>().getData();
     }
+  }
+
+  bool checkIsImage(String? name) {
+    if (name != null &&
+        (name.contains(".jpg") ||
+            name.contains(".gif") ||
+            name.contains(".tiff") ||
+            name.contains(".jpeg") ||
+            name.contains(".png")) &&
+        !name.startsWith("http")) {
+      return true;
+    }
+    return false;
   }
 }

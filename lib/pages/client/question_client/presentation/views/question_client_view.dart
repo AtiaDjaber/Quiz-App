@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -9,6 +8,7 @@ import 'package:question_answear_app/core/presentation/font_manager.dart';
 import 'package:question_answear_app/core/widget/app_bar.dart';
 import 'package:question_answear_app/core/widget/bubble_widget.dart';
 import 'package:question_answear_app/core/widget/custom_elevated_button.dart';
+import 'package:question_answear_app/core/widget/preview_widget.dart';
 import 'package:question_answear_app/pages/admin/category/domain/category.dart';
 import 'package:question_answear_app/pages/admin/question/domain/question.dart';
 import 'package:question_answear_app/pages/client/home/presentation/controllers/home_controller.dart';
@@ -27,7 +27,18 @@ class QuestionClientView extends GetView<QuestionClientController> {
         textDirection: TextDirection.rtl,
         child: Scaffold(
             backgroundColor: backgroundColor,
-            appBar: CustomAppBar(title: controller.section?.name ?? ""),
+            appBar:
+                CustomAppBar(title: controller.section?.name ?? "", actions: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  controller.isEditingAnswer = !controller.isEditingAnswer;
+                  controller.setAnswer(controller.answers
+                      .firstWhere((element) => element.isValid == 1));
+                  controller.update();
+                },
+              )
+            ]),
             body: GetBuilder<QuestionClientController>(builder: (context) {
               return controller.items.isNotEmpty
                   ? controller.showResult
@@ -131,31 +142,6 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                           padding: const EdgeInsets.all(10),
                                           child: Column(
                                             children: [
-                                              // Row(
-                                              //   mainAxisAlignment:
-                                              //       MainAxisAlignment.spaceBetween,
-                                              //   children: [
-                                              //     Text(
-                                              //       "8",
-                                              //       textAlign: TextAlign.center,
-                                              //       style: TextStyle(
-                                              //           fontSize: 18,
-                                              //           fontWeight: FontWeight.w600,
-                                              //           color:
-                                              //               Colors.grey.shade800),
-                                              //     ),
-                                              //     Text(
-                                              //       "8",
-                                              //       textAlign: TextAlign.center,
-                                              //       style: TextStyle(
-                                              //           fontSize: 18,
-                                              //           fontWeight: FontWeight.w600,
-                                              //           color:
-                                              //               Colors.grey.shade800),
-                                              //     )
-                                              //   ],
-                                              // ),
-
                                               const SizedBox(height: 30),
                                               Text(
                                                 "Question ${controller.indexQuestion + 1} / ${controller.items.length}",
@@ -167,45 +153,118 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                               ),
                                               const SizedBox(height: 10),
                                               InkWell(
-                                                onTap: () => controller
-                                                    .updateImage(controller
-                                                            .items[
-                                                        controller
-                                                            .indexQuestion]),
-                                                child: Container(
-                                                  height: 110,
-                                                  width: 200,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.grey.shade100,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    image: controller
-                                                                .items[controller
-                                                                    .indexQuestion]
-                                                                .photo ==
-                                                            null
-                                                        ? null
-                                                        : DecorationImage(
-                                                            image: FileImage(
-                                                                File(controller
+                                                onTap: () => Get.dialog(
+                                                    previewImage(controller
+                                                        .items[controller
+                                                            .indexQuestion]
+                                                        .photo)),
+                                                child: Stack(
+                                                  clipBehavior: Clip.none,
+                                                  children: [
+                                                    Container(
+                                                      height: 110,
+                                                      width: 200,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .grey.shade100,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        image: controller
                                                                     .items[controller
                                                                         .indexQuestion]
-                                                                    .photo!)),
-                                                            fit: BoxFit.fill),
-                                                  ),
-                                                  child: controller
-                                                              .items[controller
-                                                                  .indexQuestion]
-                                                              .photo !=
-                                                          null
-                                                      ? SizedBox()
-                                                      : Center(
-                                                          child: Icon(
-                                                          Icons.image_outlined,
-                                                          color: Colors.grey,
-                                                          size: 40,
-                                                        )),
+                                                                    .photo ==
+                                                                null
+                                                            ? null
+                                                            : DecorationImage(
+                                                                image: FileImage(
+                                                                    File(controller
+                                                                        .items[controller
+                                                                            .indexQuestion]
+                                                                        .photo!)),
+                                                                fit: BoxFit
+                                                                    .fill),
+                                                      ),
+                                                      child: controller
+                                                                  .items[controller
+                                                                      .indexQuestion]
+                                                                  .photo !=
+                                                              null
+                                                          ? SizedBox()
+                                                          : Center(
+                                                              child: Icon(
+                                                              Icons
+                                                                  .image_outlined,
+                                                              color:
+                                                                  Colors.grey,
+                                                              size: 40,
+                                                            )),
+                                                    ),
+                                                    Positioned(
+                                                      top: -25,
+                                                      right: -35,
+                                                      child: RawMaterialButton(
+                                                        hoverElevation: 0,
+                                                        highlightElevation: 0,
+                                                        hoverColor: Colors
+                                                            .grey.shade100,
+                                                        onPressed: () {
+                                                          controller
+                                                              .updateImageQuestion(
+                                                                  controller
+                                                                          .items[
+                                                                      controller
+                                                                          .indexQuestion]);
+                                                        },
+                                                        elevation: 0,
+                                                        fillColor: Colors
+                                                            .grey.shade200,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        shape:
+                                                            const CircleBorder(),
+                                                        child: const Icon(
+                                                            Icons.edit,
+                                                            size: 20.0,
+                                                            color:
+                                                                Colors.black54),
+                                                      ),
+                                                    ),
+                                                    // Positioned(
+                                                    //   top: -15,
+                                                    //   right: -15,
+                                                    //   child: GestureDetector(
+                                                    //     onTap: () {
+                                                    //       controller
+                                                    //           .updateImageQuestion(
+                                                    //               controller
+                                                    //                       .items[
+                                                    //                   controller
+                                                    //                       .indexQuestion]);
+                                                    //     },
+                                                    //     child: Container(
+                                                    //       height: 35,
+                                                    //       width: 40,
+                                                    //       decoration:
+                                                    //           BoxDecoration(
+                                                    //               shape: BoxShape
+                                                    //                   .circle,
+                                                    //               color: Colors
+                                                    //                   .green
+                                                    //                   .shade100),
+                                                    //       child: const Center(
+                                                    //         child: Icon(
+                                                    //           Icons.edit,
+                                                    //           color:
+                                                    //               Colors.green,
+                                                    //           size: 18,
+                                                    //         ),
+                                                    //       ),
+                                                    //     ),
+                                                    //   ),
+                                                    // )
+                                                  ],
                                                 ),
                                               ),
                                               const SizedBox(height: 10),
@@ -292,23 +351,66 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Expanded(
-                                                  child: Text(e.name ?? "",
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors
-                                                              .grey.shade800)),
-                                                ),
+                                                controller.checkIsImage(e.name)
+                                                    ? InkWell(
+                                                        onTap: () => Get.dialog(
+                                                            previewImage(
+                                                                e.name)),
+                                                        child:
+                                                            InteractiveViewer(
+                                                          child: Container(
+                                                            height: 70,
+                                                            width: 80,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              image:
+                                                                  DecorationImage(
+                                                                image: FileImage(File((e.name ??
+                                                                            "")
+                                                                        .startsWith(
+                                                                            "http")
+                                                                    ? ""
+                                                                    : e.name ??
+                                                                        "")),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Expanded(
+                                                        child: Text(
+                                                            e.name ?? "",
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade800)),
+                                                      ),
+                                                const SizedBox(width: 4),
                                                 SizedBox(
                                                   height: 20,
                                                   width: 20,
                                                   child: Center(
-                                                      child: getIcon(
-                                                          e,
-                                                          controller
-                                                              .selectedAnswer)),
+                                                      child: controller
+                                                              .isEditingAnswer
+                                                          ? InkWell(
+                                                              onTap: () {
+                                                                controller
+                                                                    .updateImageAnswer(
+                                                                        e);
+                                                              },
+                                                              child: const Icon(
+                                                                  Icons.edit,
+                                                                  color: Colors
+                                                                      .green),
+                                                            )
+                                                          : getIcon(
+                                                              e,
+                                                              controller
+                                                                  .selectedAnswer)),
                                                 )
                                               ],
                                             ),
@@ -384,6 +486,7 @@ class QuestionClientView extends GetView<QuestionClientController> {
                                         ),
                                       )
                                     : const SizedBox(),
+                                const SizedBox(height: 20)
                               ],
                             ),
                           ],
